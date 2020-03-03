@@ -1,0 +1,122 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }} 
+
+    <link href="https://cdn.datatables.net/buttons/1.5.2/css/buttons.dataTables.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.2.2/css/responsive.bootstrap4.css"/>
+
+
+{% endblock %}
+
+{% block body %}
+
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="alert alert-{{ label }}" role="alert">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endfor %}
+
+    <form id="form" action="{{ path('cajaybanco_transferencias') }}" class="form-horizontal needs-validation" role="form" method="post" enctype="multipart/form-data" novalidate>    
+
+        <div class="row mt-2 mb-2">
+
+            <div class="col-lg-12 col-sm-12 col-md-12 col-xl-12">
+
+                <div class="card mb-2">
+                    <div class="card-header">
+                        Datos de transferencia
+                    </div>
+                    <div class="card-body">
+
+                        <div class="form-row">
+                            <div class="form-group col-4">
+                                {{ form_row(form.salida) }}
+                                <div class="invalid-feedback">
+                                    Este valor es requerido.
+                                </div>                                 
+                            </div>
+
+                            <div class="form-group col-2">
+                                {{ form_row(form.monto) }}
+                                <div class="invalid-feedback">
+                                    Este valor es requerido.
+                                </div>  
+
+                            </div>
+
+                            <div class="form-group col-4">
+                                {{ form_row(form.entrada) }}
+                                <div class="invalid-feedback">
+                                    Este valor es requerido.
+                                </div>                                  
+                            </div>
+
+			                <div class="form-group col-2 mt-4">
+
+			                    <input type="submit" class="btn btn-primary " id="transferir" value="Transferir">
+
+			                </div>
+
+                        </div>
+
+                    </div>
+                    
+                </div>
+
+
+            </div>
+   
+
+        </div>
+
+        {{ form_widget(form._token) }}
+
+    </form>
+
+
+
+{% endblock %}
+
+{% block javascripts %}
+
+    {{ parent() }} 
+    <script src="https://cdn.datatables.net/buttons/1.5.2/js/dataTables.buttons.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/responsive/2.2.2/js/dataTables.responsive.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.print.min.js"></script>
+
+    <script src="http://cdn.datatables.net/plug-ins/1.10.19/sorting/date-dd-MMM-yyyy.js"></script>
+
+    <script type="text/javascript">
+
+        $(document).ready(function() {
+
+            var salida      = $('#appbundle_transferencia_dinero_salida');
+            var entrada     = $('#appbundle_transferencia_dinero_entrada');
+
+            salida.on("change", function() {
+
+                if(this.value != ''){
+                    $("#appbundle_transferencia_dinero_entrada option[value=" + this.value + "]").attr('disabled','disabled')
+                        .siblings().removeAttr('disabled');
+                }
+
+            });
+
+            entrada.on("change", function() {
+                if(this.value != ''){
+                    $("#appbundle_transferencia_dinero_salida option[value=" + this.value + "]").attr('disabled','disabled')
+                        .siblings().removeAttr('disabled');
+                }
+            });
+
+        });
+    </script>
+
+{% endblock %}    

@@ -1,0 +1,91 @@
+{% extends 'base.html.twig' %}
+
+
+{% block body %}
+
+    <form id="form" action="{{ path('producto_edit', {'id': producto.id}) }}" class="form-horizontal needs-validation" role="form" method="post"  enctype="multipart/form-data" novalidate>
+
+        <div class="form-row">
+            <div class="form-group col-md-3">
+                {{ form_row(edit_form.codigo) }}
+
+                <div class="invalid-feedback">
+                    Este valor es requerido.
+                </div>
+
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                {{ form_row(edit_form.proveedor) }}
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                {{ form_row(edit_form.categoria) }}
+            </div>
+            <div class="form-group col-md-6">
+                {{ form_row(edit_form.codigoBarra) }}
+            </div>            
+        </div>
+
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                {{ form_row(edit_form.marca) }}
+            </div>
+            <div class="form-group col-md-6">
+                {{ form_row(edit_form.stock) }}
+            </div>            
+        </div>
+
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                {{ form_row(edit_form.nombre) }}
+
+                <div class="invalid-feedback">
+                    Este valor es requerido.
+                </div>
+
+            </div>
+            <div class="form-group col-md-6">
+                {{ form_row(edit_form.descripcion) }}
+            </div>            
+        </div>
+
+        <div class="form-row">
+            <div class="form-group col-md-2">
+                {{ form_row(edit_form.precioUnitario) }}
+            </div>
+            <div class="form-group col-md-2">
+                {{ form_row(edit_form.precioCantidad) }}
+            </div>
+            <div class="form-group col-md-2">
+                {{ form_row(edit_form.precioCompra) }}
+            </div>
+        </div>
+
+        <div class="form-row">
+            {% if originalFile %}
+                <div class="form-group col-md-3">
+                    <img src="{{ asset('uploads/imagenes/' ~ originalFile) }}" height="160" width="160"/>
+                </div>                           
+            {% endif %}            
+            <div class="form-group col-md-3">
+                {{ form_row(edit_form.imagen) }}
+            </div>
+        </div>
+
+        {{ form_widget(edit_form._token) }}
+
+        <p class="pull-right">
+            <input type="button" value="Cancelar" class="btn btn-small"  onclick="location.href='{{ path('producto_index')}}'" />            
+            <input type="submit" class="btn btn-small btn-primary" value="Guardar" />
+        </p>
+        
+
+    </form>
+
+
+{% endblock %}

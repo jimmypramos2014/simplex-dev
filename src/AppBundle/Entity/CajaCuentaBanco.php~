@@ -1,0 +1,103 @@
+<?php
+
+namespace AppBundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * CajaCuentaBanco
+ *
+ * @ORM\Table(name="caja_cuenta_banco")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\CajaCuentaBancoRepository")
+ */
+class CajaCuentaBanco
+{
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="id", type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+    private $id;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="numero", type="string", length=32, nullable=true)
+     */
+    private $numero;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(name="identificador", type="integer", nullable=true)
+     */
+    private $identificador;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="CuentaTipo", inversedBy="cajaCuentaBanco", cascade={"persist"})
+     * @ORM\JoinColumn(name="cuenta_tipo_id", referencedColumnName="id")
+     * 
+     */
+    protected $cuentaTipo;
+
+    /**
+     * Get id
+     *
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set numero
+     *
+     * @param string $numero
+     *
+     * @return CajaCuentaBanco
+     */
+    public function setNumero($numero)
+    {
+        $this->numero = $numero;
+
+        return $this;
+    }
+
+    /**
+     * Get numero
+     *
+     * @return string
+     */
+    public function getNumero()
+    {
+        return $this->numero;
+    }
+
+    /**
+     * Set identificador
+     *
+     * @param integer $identificador
+     *
+     * @return CajaCuentaBanco
+     */
+    public function setIdentificador($identificador)
+    {
+        $this->identificador = $identificador;
+
+        return $this;
+    }
+
+    /**
+     * Get identificador
+     *
+     * @return int
+     */
+    public function getIdentificador()
+    {
+        return $this->identificador;
+    }
+}
+

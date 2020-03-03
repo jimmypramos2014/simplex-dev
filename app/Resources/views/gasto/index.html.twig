@@ -1,0 +1,235 @@
+{% extends 'base.html.twig' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link href="https://cdn.datatables.net/buttons/1.5.2/css/buttons.dataTables.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.2.2/css/responsive.bootstrap4.css"/>
+{% endblock %}
+
+{% block body %}
+
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="alert alert-{{ label }}" role="alert">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endfor %}
+
+    <div class="container">
+
+
+
+        <div class="card mx-auto mt-5">
+            <div class="card-body">
+
+                <div class="row mt-2 mb-4 pr-3">
+                    <div class="col-lg-12 ">
+                        <a href="{{ path('gasto_new') }}" class="btn btn-primary pull-right ml-2">Registrar gasto</a>
+                        <a href="{{ path('gasto_egreso_new') }}" class="btn btn-primary pull-right ">Registrar egreso</a>
+                    </div>                    
+                </div>
+
+
+                <div class="row mt-2 ">
+                    <div class="col-lg-12">
+                        <table id="dtProducto" class="table table-striped table-bordered" style="width: 100%;">                            
+                            <thead>
+                                <tr>
+                                    <th>Local</th>
+                                    <th>Proveedor o beneficiario</th>
+                                    <th>Servicio o Concepto</th>
+                                    <th>Monto</th>
+                                    <th>Fecha</th>
+                                    <th>Tipo</th>
+                                    <th class="no-sort">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {% set item = 1 %}
+                            {% for gasto in gastos %}
+                                <tr>
+                                    <td>{{ gasto.local ? gasto.local | upper : ''  }}</td>
+                                    <td>{{ gasto.proveedor ? gasto.proveedor | upper : gasto.beneficiario | upper  }}</td>
+                                    <td>{{ gasto.servicio ? gasto.servicio | upper  : gasto.concepto | upper  }}</td>
+                                    <td>{{ gasto.monto | number_format(2, '.', ',') }}</td>
+                                    <td><span class="d-none">{{ gasto.fecha | date('YmdHi') }}</span>{{ gasto.fecha | date('d/m/Y') }}</td>
+                                    <td>{{ gasto.tipo | upper  }}</td>
+
+                                    <td class="text-center">
+
+                                        <a href="javascript:eliminar({{gasto.id}})" class="mr-2" data-toggle="tooltip"  title="Eliminar">
+                                            <i class="fa fa-remove fa-lg"></i>
+                                        </a>
+
+                                        {% if gasto.tipo == 'egreso' %}
+
+                                            <a href="{{ path('gasto_egreso_edit', { 'id': gasto.id }) }}">
+                                                <i class="fa fa-edit fa-lg" data-toggle="tooltip" title="Editar"></i>                                                
+                                            </a>
+
+                                            <a href="javascript:window.open('{{ path('gasto_show_reciboegreso', { 'id': gasto.id }) }}','blank','width=595, height=842')" >
+                                                <i class="fa fa-print fa-lg" data-toggle="tooltip" title="Recibo de egreso"></i>                                                
+                                            </a>
+
+                                        {% endif %}
+
+                                        {% if gasto.tipo == 'gasto' %}
+
+                                            <a href="{{ path('gasto_edit', { 'id': gasto.id }) }}">
+                                                <i class="fa fa-edit fa-lg" data-toggle="tooltip" title="Editar"></i>                                                
+                                            </a>
+
+
+                                        {% endif %}
+
+
+                                        {% if gasto.local.cajaybanco %}
+                                            <a href="#" class="mr-2" data-toggle="modal" data-target="#pagarTransaccion" data-factura="{{ gasto.id }}"><i class="fa fa-money fa-lg" data-toggle="tooltip" title="Pagar Transaccion"></i></a>
+                                        {% endif %}     
+
+
+                                    </td>
+
+                                </tr>
+                                {% set item = item + 1 %}
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade pagarTransaccion" id="pagarTransaccion" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Pagar transacción</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form id="form" action="{{ path('cajaybanco_procesarpagotransaccion') }}" class="form-horizontal " role="form" method="post"  enctype="multipart/form-data" novalidate>
+                    <div class="modal-body">
+
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                        <button type="submit" class="btn btn-success" id="btn_pagar">Pagar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+
+{% endblock %}
+{% block javascripts %}
+
+    {{ parent() }} 
+    <script src="https://cdn.datatables.net/buttons/1.5.2/js/dataTables.buttons.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/responsive/2.2.2/js/dataTables.responsive.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.print.min.js"></script>
+
+    <script type="text/javascript">
+
+        function eliminar(id) {
+            bootbox.confirm({
+                buttons: {
+                    confirm: {
+                        label: 'Aceptar',
+                    },
+                    cancel: {
+                        label: 'Cancelar',
+                    }
+                },                
+                size: 'small',
+                message: "¿Está seguro de eliminar el registro?", 
+                callback: function(res){ 
+                    if(res){
+                        location = id+'/delete';
+                    }
+                }
+            });
+        } 
+
+        $(document).ready(function() {
+            $('#dtProducto').DataTable( {
+                "language": {
+                    "lengthMenu": "Mostrar _MENU_ registros por página",
+                    "zeroRecords": "No se encontraron registros",
+                    "info": "Mostrando página _PAGE_ de _PAGES_",
+                    "infoEmpty": "No existen registros",
+                    "infoFiltered": "(filtrado de _MAX_ total registros)",
+                    "search": "Buscar:",
+                    "paginate": {
+                        "first":      "Primero",
+                        "last":       "Último",
+                        "next":       "Siguiente",
+                        "previous":   "Anterior"
+                    },
+                },                
+                dom: 'Bfrtip',
+                order: [[ 4, "desc" ]],
+                responsive: true,
+                buttons: [
+                    {
+                        extend: 'excelHtml5',
+                        messageTop: 'Generado por : {{ app.user.username }} . Fecha de generación :  {{ "now" | date("d/m/Y H:i") }}'
+                    },
+                    {
+                        extend: 'pdfHtml5',
+                        messageTop: 'Generado por : {{ app.user.username }} . Fecha de generación :  {{ "now" | date("d/m/Y H:i") }}'
+                    },
+                    {
+                        extend: 'print',
+                        messageTop: 'Generado por : {{ app.user.username }} . Fecha de generación :  {{ "now" | date("d/m/Y H:i") }}'
+                    }
+                ]  
+            });
+
+
+
+            $('#pagarTransaccion').on('show.bs.modal', function (event) {
+                var button = $(event.relatedTarget);
+                var recipient = button.data('factura');
+
+                var modal = $(this);
+
+                var cargandoTexto = '<div class="text-center"><i class="fa fa-circle-o-notch fa-spin"></i>Cargando.....</div>';
+            
+                modal.find('.modal-body').html(cargandoTexto);
+
+                var data = {
+                    factura     : recipient,
+                    tipo  : 'gasto',
+                }
+
+
+                $.ajax({
+                    method: "POST",
+                    url: "{{ path('procesar_pago_transaccion')}}",
+                    data: data,
+                    success: function(data){
+                        modal.find('.modal-body').html(data);
+                        //location.reload();
+
+                    }
+
+                });
+
+            });            
+            
+        });
+        
+    </script>
+          
+{% endblock %}

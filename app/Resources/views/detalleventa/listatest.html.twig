@@ -1,0 +1,163 @@
+{% extends 'base.html.twig' %}
+
+
+
+
+
+{% block stylesheets %}
+    {{ parent() }} 
+
+    <link href="https://cdn.datatables.net/buttons/1.5.2/css/buttons.dataTables.min.css" rel="stylesheet">
+    <style>
+        li *{
+            display:inline-block;
+            margin:0 10px;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+
+<form action="#" method="POST">
+    {{ form_errors(form) }}
+    <fieldset>
+        <legend>Add a new post</legend>
+        {{ form_row(form.tipo) }}
+
+        <div id="post_tags" data-prototype="{{ _self.widget_prototype(form.transaccionDetalle, 'Remove tag')|escape }}">
+            {% for widget in form.transaccionDetalle.children %}
+                {{ _self.widget_prototype(widget, 'Remove tag') }}
+            {% endfor %}
+        </div>
+
+        <a class="btn-add" data-target="post_tags">Add tag</a>
+    </fieldset>
+
+    {{ form_widget(form._token) }}
+
+    <input type="submit" value="Add post" />
+</form>
+
+
+{#     <div class="container">
+
+        <div class="card mx-auto mt-5">
+            <div class="card-body">
+
+                <div class="form-row">                   
+                    <div class="form-group col-md-12">
+                        {{ form_row(form.tipo)  }}
+                    </div>
+                </div>
+
+                <ul class="tags list-group" data-prototype="{{ form_widget(form.transaccionDetalle.vars.prototype)|e('html_attr') }}"></ul>
+
+
+
+            </div>
+        </div>
+    </div> #}
+
+
+
+{% endblock %}
+{% block javascripts %}
+
+    {{ parent() }} 
+    <script src="https://cdn.datatables.net/buttons/1.5.2/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.print.min.js"></script>
+
+    <script src="http://cdn.datatables.net/plug-ins/1.10.19/sorting/date-dd-MMM-yyyy.js"></script>
+
+    <script type="text/javascript">
+
+
+        $(document).ready(function() {
+
+
+            // // setup an "add a tag" link
+            // var $addTagLink = $('<a href="#" class="link add_tag_link"><i class="fa fa-plus"></i>Agregar pago</a>');
+            // var $newLinkLi = $('<div></div>').append($addTagLink);
+
+            // $(document).ready(function() {
+            //     // Get the ul that holds the collection of tags
+            //    var $collectionHolder = $('ul.tags');
+                
+            //     // add the "add a tag" anchor and li to the tags ul
+            //     $collectionHolder.append($newLinkLi);
+                
+            //     // count the current form inputs we have (e.g. 2), use that as the new
+            //     // index when inserting a new item (e.g. 2)
+            //     $collectionHolder.data('index', $collectionHolder.find(':input').length);
+                
+            //     $addTagLink.on('click', function(e) {
+            //         // prevent the link from creating a "#" on the URL
+            //         e.preventDefault();
+                    
+            //         // add a new tag form (see code block below)
+            //         addTagForm($collectionHolder, $newLinkLi);
+            //     });
+                
+                
+            // });
+
+            // function addTagForm($collectionHolder, $newLinkLi) {
+            //     // Get the data-prototype explained earlier
+            //     var prototype = $collectionHolder.data('prototype');
+                
+            //     // get the new index
+            //     var index = $collectionHolder.data('index');
+                
+            //     // Replace '$$name$$' in the prototype's HTML to
+            //     // instead be a number based on how many items we have
+            //     var newForm = prototype.replace(/__name__/g, index);
+                
+            //     // increase the index with one for the next item
+            //     $collectionHolder.data('index', index + 1);
+                
+            //     // Display the form in the page in an li, before the "Add a tag" link li
+            //     var $newFormLi = $('<li class="list-group-item"></li>').append(newForm);
+                
+            //     // also add a remove button, just for this example
+            //     $newFormLi.append('<a href="#" class="remove-tag"><i class="fa fa-trash"></i></a>');
+                
+            //     $newLinkLi.before($newFormLi);
+                
+            //     // handle the removal, just for this example
+            //     $('.remove-tag').click(function(e) {
+            //         e.preventDefault();
+                    
+            //         $(this).parent().remove();
+                    
+            //         return false;
+            //     });
+            // }
+
+
+
+$('.btn-add').click(function(event) {
+    var collectionHolder = $('#' + $(this).attr('data-target'));
+    var prototype = collectionHolder.attr('data-prototype');
+    var form = prototype.replace(/__name__/g, collectionHolder.children().length);
+
+    collectionHolder.append(form);
+
+    return false;
+});
+$('.btn-remove').live('click', function(event) {
+    var name = $(this).attr('data-related');
+    $('*[data-content="'+name+'"]').remove();
+
+    return false;
+});
+
+
+        });
+
+    </script>
+          
+{% endblock %}

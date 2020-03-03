@@ -1,0 +1,20 @@
+<p>Estimado  {{ cliente | upper }} ,</p>
+<br>
+
+{{ mensaje }}
+
+<br>
+
+COMPROBANTE : <a href="{{ enlace }}">Descargar</a>
+
+<br>
+CDR : <a href="{{ facturaVenta.enlaceCdr ?  facturaVenta.enlaceCdr : '#' }}">Descargar</a>
+
+<br>
+XML : <a href="{{ facturaVenta.enlaceXml ?  facturaVenta.enlaceXml : '#' }}">Descargar</a>
+
+<br>
+
+<p>Atentamente,</p>
+<p>{{ empresa | upper }}</p>
+

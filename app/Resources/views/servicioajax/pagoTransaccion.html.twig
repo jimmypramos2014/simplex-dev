@@ -1,0 +1,150 @@
+<div class="form-row">                   
+    <div class="form-group col-md-12">
+        {{ form_row(form.tipo)  }}
+    </div>
+</div>
+
+<div class="form-row"> 
+
+    <div class="form-group col-md-12 col-md-offset-2" id="exp_list" data-prototype="{% filter escape %}{{ include('servicioajax/prototypePagoTransaccion.html.twig', { 'form': form.transaccionDetalle.vars.prototype }) }} {% endfilter %} ">
+        {# "{{ form_widget(form.transaccionDetalle.vars.prototype)|e('html_attr') }}"   #}
+
+        <table class="table ">
+
+            <thead>
+                <tr>
+                    <th>Tipo.Doc.</th>
+                    <th>Num. Doc.</th>
+                    <th>Monto</th>
+                    <th>Caja o Banco</th>
+                    <th></th>
+                </tr>
+            </thead>
+            
+            <tbody class="transaccion">
+                {% for detalle in form.transaccionDetalle  %}
+
+                    <tr class="items">
+                        <td>{{ form_widget(detalle.tipoDocumento) }}</td>
+                        <td>{{ form_widget(detalle.numeroDocumento) }}</td>
+                        <td>{{ form_widget(detalle.monto) }}</td>
+                        <td>{{ form_widget(detalle.cajaCuentaBanco) }}</td>
+                        <td><a href="#" class="btn btn-danger remove-item" ><i class="fa fa-trash"></i></a></td>
+                    </tr>
+
+                {% endfor  %}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="5"><a href="#" class="btn btn-info add-item" ><i class="fa fa-plus "></i></a></td>
+                </tr>
+            </tfoot>
+
+        </table>
+    </div>
+
+</div>
+
+<input type="hidden" value="{{ factura }}" name="identificador" />
+<input type="hidden" value="{{ tipo }}" name="tipo" />
+{{ form_widget(form.identificador) }}
+{{ form_widget(form.empresa)  }}
+{{ form_widget(form._token) }}
+
+
+<script type="text/javascript">
+
+        var $collectionHolder;
+
+
+        $(document).ready(function() {
+
+            // Obtenemos el objeto colector
+            $collectionHolder = $('#exp_list');
+
+            $collectionHolder.data('index',$collectionHolder.find('.items').length);
+
+            
+            $('.add-item').on('click',function(){
+
+                addNewForm($collectionHolder);
+
+            })
+
+
+            $('body')
+                .on('click','.remove-item',function(e) {
+
+                    $(e.target).parents('.items').remove();
+                    
+                });
+
+
+        });
+
+        function addNewForm($collectionHolder) {
+
+            $collectionHolder.data('index',$collectionHolder.find('.items').length);
+
+            //Creamos el nuevo formulario y agregamos al colector
+            // obteniendo el prototype
+            var prototype = $collectionHolder.data('prototype');
+            // obtenemos el index 
+            var index  =  $collectionHolder.data('index');
+            // Creamos el form
+            var newForm = prototype.replace(/__name__/g, index);
+
+            $collectionHolder.data('index',index++);
+
+            $('.transaccion').append(newForm);
+
+        }
+
+
+        // function addNewForm(){
+
+        //     // obteniendo el prototype
+        //     var prototype = $collectionHolder.data('prototype');
+        //     // obtenemos el index 
+        //     var index  =  $collectionHolder.data('index');
+        //     // Creamos el form
+        //     var newForm = prototype.replace(/__name__/g, index);
+
+        //     $collectionHolder.data('index',index++);
+
+        //     // Creamos el panel
+        //     var $panel = $('<div class="card mt-2 "><div class="card-header">Detalle de pago</div></div>');
+        //     // Creamos el panel body
+        //     var $panelBody = $('<div class="card-body"></div>').append(newForm);//
+
+        //     //$panelBody.append($formRow);
+        //     $panel.append($panelBody);
+        //     addRemoveButton($panel);
+
+        //     //Agregarmos el nuevo panel al colector
+        //     //$addNewItem.before($panel);
+
+        // }
+
+
+
+        // function addRemoveButton($panel){
+
+        //     // Creamos el boton borrar
+        //     //var $removeButton = $('<a href="#" class="btn btn-danger">Borrar</a>');
+
+        //     // Creamos el panel footer donde ira el boton borrar
+        //     //var $panelFooter = $('<div class="card-footer"></div>').append($removeButton);
+
+        //     // procesando el evento borrar
+        //     $('.remove-item').on('click',function(e){
+        //         e.preventDefault();
+        //         $(e.target).parents('.table').remove();
+
+        //     });
+
+        //     //$panel.append($panelFooter);
+
+        // }
+
+</script>

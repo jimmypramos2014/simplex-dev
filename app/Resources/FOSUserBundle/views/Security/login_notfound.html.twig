@@ -1,0 +1,28 @@
+{% extends '@FOSUser/layout.html.twig' %}
+
+{% block fos_user_content %}
+
+
+        <div class="container">
+            <div class="py-5 text-center">
+                <img class="logo d-block mx-auto mb-4" src="{{asset('template/img/logo.png')}}" alt="" >
+            </div>
+            <div class="card card-login mx-auto mt-5">
+
+                <div class="card-body">
+
+                    {% if error %}
+                        <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+                    {% endif %}
+
+                    <h2>Lo sentimos, la página no existe.</h2>
+
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+{% endblock fos_user_content %}

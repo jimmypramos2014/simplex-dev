@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="es">
+
+    <meta charset="utf-8">
+    <head>
+        <title>Nota de credito</title>
+        <style type="text/css">
+     
+            table {
+                display: table;
+                border-collapse: separate;
+                border-spacing: 2px;
+                border-color: grey;                
+            }
+
+            .col-4 {
+                -webkit-box-flex: 0;
+                -ms-flex: 0 0 33.333333%;
+                flex: 0 0 33.333333%;
+                max-width: 33.333333%;
+            }
+
+            .table {
+                width: 100%;
+                max-width: 100%;
+                margin-bottom: 1rem;
+                background-color: transparent;
+            }
+
+            .h3, h3 {
+                font-size: 1.75rem;
+                font-family: inherit;
+                font-weight: 500;
+                line-height: 1.2;
+                color: inherit;                
+            }
+
+            .h6, h6 {
+                font-size: 1rem;
+                font-family: inherit;
+                font-weight: 500;
+                line-height: 1.2;
+                color: inherit;                    
+            }            
+
+            .text-center {
+                text-align: center !important;
+            }            
+        </style>
+    </head>
+
+    <body>
+
+        <div class="col-12 ">
+            <table class="table">
+
+                <tr class="h3 text-center"><td colspan="4">NOTA DE CRÉDITO</td></tr>
+                <tr class="h4 text-center"><td colspan="4">{{ localObj.nombre }}</td></tr>
+                <tr class="text-center"><td colspan="4">{{ localObj.direccion }}</td></tr>
+                <tr class="text-center"><td colspan="4"><center>Tel: {{ localObj.telefono }}</center></td></tr>
+                <tr><td colspan="4"><center>RUC : {{ localObj.empresa.ruc }}</center></td></tr>
+
+                <tr><th>TICKET RELACIONADO: </th><td>{{facturaCompra.ticket }}</td><th>  FECHA:</th><td>{{ facturaCompra.fecha | date('d/m/Y  H:i') }}</td></tr>
+                <tr><th>NUMERO: </th><td>{{ numero }}</td></tr>
+                <tr>
+                    <td colspan="4" >
+                        <hr>
+                        <table class="table table-striped">
+                            <thead>
+                                <tr class="text-center">
+                                    <th>Producto</th>
+                                    <th>Cantidad</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for detalle in detalleComprasAnulada %}
+
+                                    <tr class="text-center">
+                                        <td>{{ detalle.productoXLocal.producto.nombre }}</td>
+                                        <td>{{ detalle.cantidad }}</td>
+                                    </tr>   
+                                {% endfor  %}
+                            </tbody>
+
+                         
+                        </table>
+                        <hr>
+                    </td>
+                </tr>
+
+            </table>
+
+
+        </div>    
+
+        <div class="col-12 ">
+            
+            <p class="text-center ">
+                **GRACIAS**
+                <br>
+                Este es un comprobante interno que valida la anulación de la compra
+            </p>
+
+        </div>
+
+    </body>
+</html>

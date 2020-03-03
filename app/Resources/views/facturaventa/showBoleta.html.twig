@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="es">
+
+    <meta charset="utf-8">
+    <head>
+        <title>Boleta</title>
+        <style type="text/css">
+
+            @font-face {
+                font-family: Cambria;
+                src: url({{ 'http://' ~ host ~ '/fonts/Cambria.ttf' }} ) format('truetype');
+            }
+
+            body {
+                font-family: 'Cambria';
+                font-size:12pt;
+                background-image: url({{ 'http://' ~ host ~ '/formatos/' ~ app.session.get('empresa') ~ '/boleta.jpg' }});
+                background-repeat: no-repeat;
+                background-size: 100%;
+            }
+        
+        </style>
+    </head>
+
+    <body>
+        {% set ticket_X = 0 %}
+        {% set ticket_Y = 0 %}
+        {% set cliente_X = 0 %}
+        {% set cliente_Y = 0 %}
+        {% set direccion_X = 0 %}
+        {% set direccion_Y = 0 %}
+        {% set rucCliente_X = 0 %}
+        {% set rucCliente_Y = 0 %}
+        {% set fecha_X = 0 %}
+        {% set fecha_Y = 0 %}
+        {% set detalleValorUnitario_X = 0 %}
+        {% set detalleValorUnitario_Y = 0 %}
+        {% set detalleValorVenta_X = 0 %}
+        {% set detalleValorVenta_Y = 0 %}
+        {% set detalleDescripcion_X = 0 %}
+        {% set detalleDescripcion_Y = 0 %}
+        {% set detalleCantidad_X = 0 %}
+        {% set detalleCantidad_Y = 0 %}
+
+        {% set montoTotal_X = 0 %}
+        {% set montoTotal_Y = 0 %}
+        {% set inicioDetalleVenta_X = 0 %}
+        {% set inicioDetalleVenta_Y = 0 %}
+
+        {% set direccionEmpresa_X = 0 %}
+        {% set direccionEmpresa_Y = 0 %}
+        {% set contactoEmpresa_X = 0 %}
+        {% set contactoEmpresa_Y = 0 %}
+
+        {% set finDetalleVenta_X = 0 %}
+        {% set finDetalleVenta_Y = 0 %}
+
+        {% set rucEmpresa_X = 0 %}
+        {% set rucEmpresa_Y = 0 %}
+
+        {% for componenteXDocumento in componentesXDocumento %}
+            
+            {% if componenteXDocumento.componente.nombre == 'ticket' %}
+                {% set ticket_X = componenteXDocumento.posicionX %}
+                {% set ticket_Y = componenteXDocumento.posicionY %}
+            {% endif %}
+
+
+            {% if componenteXDocumento.componente.nombre == 'cliente' %}
+                {% set cliente_X = componenteXDocumento.posicionX %}
+                {% set cliente_Y = componenteXDocumento.posicionY %}
+            {% endif %}
+
+
+            {% if componenteXDocumento.componente.nombre == 'direccion' %}
+                {% set direccion_X = componenteXDocumento.posicionX %}
+                {% set direccion_Y = componenteXDocumento.posicionY %}
+            {% endif %}
+
+            
+            {% if componenteXDocumento.componente.nombre == 'rucCliente' %}
+                {% set rucCliente_X = componenteXDocumento.posicionX %}
+                {% set rucCliente_Y = componenteXDocumento.posicionY %}
+            {% endif %}
+
+
+            {% if componenteXDocumento.componente.nombre == 'fecha' %}
+                {% set fecha_X = componenteXDocumento.posicionX %}
+                {% set fecha_Y = componenteXDocumento.posicionY %}
+            {% endif %}
+
+            {% if componenteXDocumento.componente.nombre == 'detalleCantidad' %}
+                {% set detalleCantidad_X = componenteXDocumento.posicionX %}
+                {% set detalleCantidad_Y = componenteXDocumento.posicionY %}
+            {% endif %}
+
+            {% if componenteXDocumento.componente.nombre == 'detalleDescripcion' %}
+                {% set detalleDescripcion_X = componenteXDocumento.posicionX %}
+                {% set detalleDescripcion_Y = componenteXDocumento.posicionY %}
+            {% endif %}
+
+
+            {% if componenteXDocumento.componente.nombre == 'detalleValorUnitario' %}
+                {% set detalleValorUnitario_X = componenteXDocumento.posicionX %}
+                {% set detalleValorUnitario_Y = componenteXDocumento.posicionY %}
+            {% endif %}
+
+            {% if componenteXDocumento.componente.nombre == 'detalleValorVenta' %}
+                {% set detalleValorVenta_X = componenteXDocumento.posicionX %}
+                {% set detalleValorVenta_Y = componenteXDocumento.posicionY %}
+            {% endif %}
+
+            
+            {% if componenteXDocumento.componente.nombre == 'montoTotal' %}
+                {% set montoTotal_X = componenteXDocumento.posicionX %}
+                {% set montoTotal_Y = componenteXDocumento.posicionY %}
+            {% endif %}
+
+
+            {% if componenteXDocumento.componente.nombre == 'inicioDetalleVenta' %}
+                {% set inicioDetalleVenta_X = componenteXDocumento.posicionX %}
+                {% set inicioDetalleVenta_Y = componenteXDocumento.posicionY %}
+            {% endif %}
+            
+            {% if componenteXDocumento.componente.nombre == 'direccionEmpresa' %}
+                {% set direccionEmpresa_X = componenteXDocumento.posicionX %}
+                {% set direccionEmpresa_Y = componenteXDocumento.posicionY %}
+            {% endif %}
+
+            {% if componenteXDocumento.componente.nombre == 'contactoEmpresa' %}
+                {% set contactoEmpresa_X = componenteXDocumento.posicionX %}
+                {% set contactoEmpresa_Y = componenteXDocumento.posicionY %}
+            {% endif %}
+
+            {% if componenteXDocumento.componente.nombre == 'finDetalleVenta' %}
+                {% set finDetalleVenta_X = componenteXDocumento.posicionX %}
+                {% set finDetalleVenta_Y = componenteXDocumento.posicionY %}
+            {% endif %}
+
+            {% if componenteXDocumento.componente.nombre == 'rucEmpresa' %}
+                {% set rucEmpresa_X = componenteXDocumento.posicionX %}
+                {% set rucEmpresa_Y = componenteXDocumento.posicionY %}
+            {% endif %}
+
+
+        {% endfor %}
+
+        {% if rucEmpresa_X != 0 %}
+
+            <span id="rucEmpresa" style="position:absolute; top: {{rucEmpresa_X}}px; left:{{rucEmpresa_Y}}px; width: 300px; color: black ;font-size:20pt;font-weight:bold;">{{ localObj.empresa.ruc ? 'RUC: ' ~ localObj.empresa.ruc : '' }}</span>
+        {% endif %}
+
+        {% if localObj.empresa.direccion %}
+
+        <span id="direccionEmpresa" style="position:absolute; top: {{direccionEmpresa_X}}px; left:{{direccionEmpresa_Y}}px; width: 530px; color:black;font-size:12pt;font-weight:bold;">{{ localObj.empresa.direccion }}</span>
+        {% endif %}
+
+        {% if localObj.telefono %}
+
+            <span id="contactoEmpresa" style="position:absolute; top: {{contactoEmpresa_X}}px; left:{{contactoEmpresa_Y}}px; width: 530px; color: black;font-size:12pt;font-weight:bold;">{{ 'Tel.:' ~ localObj.telefono ~ ' ' }} {{ localObj.email ? ' Email: ' ~ localObj.email:'' }}  {{ localObj.empresa.direccionWeb ? ' Web: ' ~ localObj.empresa.direccionWeb : '' }}  </span>
+
+        {% endif %}
+
+
+        <span id="ticket" style="position:absolute; top: {{ticket_X}}px; left:{{ticket_Y}}px; width: 300px; color: black;font-size:20pt;">{{ facturaVenta.ticket }}</span>
+
+        <span id="cliente" style="position:absolute; top: {{cliente_X}}px; left: {{cliente_Y}}px; width: 600px; color: black;">{{ facturaVenta.cliente.razonSocial }} </span>
+
+        <span id="direccion" style="position:absolute; top: {{ direccion_X }}px; left: {{ direccion_Y }}px; width: 600px; color: black;">{{ facturaVenta.cliente.direccion }} </span>
+
+        <span id="rucCliente" style="position:absolute; top: {{ rucCliente_X }}px; left: {{ rucCliente_Y }}px; width: 200px; color: black;">{{ facturaVenta.cliente.ruc }}</span>
+
+        <span id="fecha" style="position:absolute; top: {{ fecha_X }}px; left: {{ fecha_Y }}px; width: 200px; color: black;">{{ facturaVenta.fecha | date('d-m-Y') }}</span>
+
+        
+            {% set top = inicioDetalleVenta_X %}
+            {% set end = finDetalleVenta_X %}
+            {% set item = 1 %}
+            {% set impuesto = 0 %}
+            {% set total = 0 %}
+
+        <div style="position:absolute; top: {{ top ~ 'px'}}; left: 80px; color: black;">
+
+            <table  width="880" border="0" style="border-top: 1px solid;border-bottom: 1px solid;border-left: 1px solid;border-right: 1px solid;background-color:#EEEDEB;">
+                {% for detalle in facturaVenta.venta.detalleVenta %}
+                    <tr>
+                        <td width="9%" align="center">{{ detalle.cantidad }}</td>
+                        <td width="5%" align="left">{{ detalle.productoXLocal.producto.codigo }}</td>
+                        <td width="60%" align="left">{{ detalle.productoXLocal.producto.nombre | upper  }} {{ detalle.descripcion ? ' - ' ~  detalle.descripcion | upper  : ''  }}</td>
+                        <td width="9%" align="center">{{ detalle.productoXLocal.producto.marca | upper }}</td>                        
+                        {% set precio = detalle.subtotal / detalle.cantidad %}
+                        <td width="8%" align="right">{{ precio | number_format(2, '.', ',') }}</td>
+                        <td width="9%" align="right" >{{ detalle.subtotal | number_format(2, '.', ',') }}</td>                    
+                    </tr>
+                    {% set item = item + 1 %}
+                    {% set total = total + detalle.subtotal %}
+                    {% set impuesto = impuesto +  0.18 * detalle.subtotal/1.18 %}
+
+                {% endfor %}
+                
+
+            </table>
+
+            <table  width="880" border="0" >
+
+                {% set subtotal = total/1.18 %}
+                {% set igvtotal = subtotal * 0.18 %}
+
+
+                <tr>
+                    <td width="71%" ></td>
+                    <th width="15%" align="right" style="font-size:16px;border-color:#5e5c5c;background-color:#5e5c5c;color:white; border-left: 1px solid;border-top: 1px solid;border-right: 1px solid;border-bottom: 0;">Subtotal S./</th>
+                    <th align="right" style="font-size:16px;border-left: 1px solid;border-right: 1px solid;border-top: 1px solid;background-color:#EEEDEB;">{{ subtotal | number_format(2, '.', ',')  }}</th>                    
+                </tr>
+
+                <tr>
+                    <td ></td>
+                    <th align="right" style="font-size:16px;border-color:#5e5c5c;background-color:#5e5c5c;color:white;border-left: 1px solid;border-right: 1px solid;border-bottom: 0;">I.G.V. 18%</th>
+                    <th align="right" style="font-size:16px;border-left: 1px solid;border-right: 1px solid;background-color:#EEEDEB;">{{ igvtotal | number_format(2, '.', ',')  }}</th>                    
+                </tr>
+
+                <tr>
+                    <td ></td>
+                    <th align="right" style="font-size:16px;border-color:#5e5c5c;background-color:#5e5c5c;color:white;border-left: 1px solid;border-bottom: 1px solid;border-right: 1px solid;">Total S./</th>
+                    <th align="right" style="font-size:16px;border-left: 1px solid;border-bottom: 1px solid;border-right: 1px solid;background-color:#EEEDEB;">{{ total | number_format(2, '.', ',')  }}</th>                    
+                </tr>
+
+            </table>
+
+            <br>
+
+        </div>
+
+
+    
+        <span id="foot" style="position:absolute; top: 1350px; left: 0px; width: 20px; color: black;">.</span>
+
+
+    </body>
+</html>

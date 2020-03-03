@@ -1,0 +1,116 @@
+<section class="sheet padding-10mm" style="font-size: 9pt;">
+    <div class="cabecera-guia" style="text-align: center;">
+
+        {% if facturaVenta.local.razonComercial %}          
+            <span style="font-size: 15pt;"><strong>{{ facturaVenta.local.razonComercial ?  facturaVenta.local.razonComercial : facturaVenta.local.empresa.nombre }}</strong></span></br>
+        {% endif %}
+
+        <span style="font-size: 9pt;"><strong>{{ facturaVenta.local.empresa.nombre }}</strong></span></br>
+
+        {% if facturaVenta.local.direccion %}
+            {{ facturaVenta.local.direccion }}</br>
+        {% endif %}
+        
+        <strong>RUC: {{ facturaVenta.local.rucComercial ? facturaVenta.local.rucComercial : facturaVenta.local.empresa.ruc }}</strong></br>
+
+        {% if facturaVenta.local.telefono %}
+            {{ facturaVenta.local.telefono ?  'Teléfono:' ~ facturaVenta.local.telefono : '' }}</br>
+        {% endif %}
+
+        <strong>Ticket</strong></br>
+        <strong>{{facturaVenta.ticket }}</strong>
+    </div>
+
+    <hr style="border:1px dotted #b8b3b3; width:220px" />
+
+    <div class="cuerpo-cabecera">
+        <strong>CLIENTE</strong></br>
+        {{ facturaVenta.cliente }}</br>
+        <strong>CAJA:</strong> {{ facturaVenta.caja.nombre | upper }}</br>
+
+        <strong>FECHA EMISIÓN:</strong> {{ facturaVenta.fecha | date('d/m/Y  H:i') }}</br>
+        <strong>MONEDA:</strong> {{ facturaVenta.venta.ventaFormaPago[0].moneda ? facturaVenta.venta.ventaFormaPago[0].moneda.nombre | upper : 'SOLES' }} </br>
+        <strong>IGV:</strong> 18%
+    </div>
+
+    <hr style="border:1px dotted #b8b3b3; width:220px" />
+
+    <div class="cuerpo" style="font-size: 9pt;">
+        <table cellspacing="3" cellpadding="1">
+            <tr>
+                <th style="text-align:left;font-size: 9pt;">[CANT]</th>
+                <th style="text-align:left;font-size: 9pt;">DESCRIPCIÓN</th>
+                <th style="text-align:left;font-size: 9pt;">P/U</th>
+                <th style="text-align:right;font-size: 9pt;">TOTAL</th>
+            </tr>
+
+            {% set total = 0 %}
+            {% set impuesto = 0 %}
+            {% for detalle in facturaVenta.venta.detalleVenta %}
+
+                <tr>
+                    {% set descripcion = '' %}
+                    {% if detalle.descripcion  %}
+                        {% set descripcion = detalle.descripcion  %}
+                    {% endif %}
+
+                    <td style="text-align:left;font-size: 9pt;">{{ '[' ~ detalle.cantidad ~ '] ' }}</td>
+                    <td style="text-align:left;font-size: 9pt;">{{ detalle.productoXLocal.producto.nombre | slice(0,25) | upper  ~ ' ' ~ descripcion }}</td>
+
+                    {% set precioUnitario = detalle.subtotal/detalle.cantidad %}
+                    <td style="text-align:right;font-size: 9pt;">{{ precioUnitario | number_format(2, '.', ',') }}</td>
+                    <td style="text-align:right;font-size: 9pt;">{{ detalle.subtotal | number_format(2, '.', ',') }}</td>
+                </tr>   
+                {% set total = total + detalle.subtotal %}
+                {% set impuesto = impuesto +  0.18 * detalle.subtotal/1.18 %}
+            {% endfor  %}
+
+
+            <tr class="total">
+              <td colspan="3" style="text-align:left;font-size: 9pt;"><b>TOTAL : </b></td>
+              <td style="text-align:right;font-size: 9pt;">{{ total | number_format(2, '.', ',') }}</td>
+            </tr>
+
+            {% if facturaVenta.venta.ventaFormaPago[0].montoEntregado and facturaVenta.local.ventanaVuelto %}                    
+
+                <tr class="total">
+                  <td colspan="4" style="text-align:left;font-size: 9pt;"><b>FORMA DE PAGO</b></td>
+                </tr>  
+
+                <tr class="total">
+                  <td colspan="3" style="text-align:left;font-size: 9pt;"><b>EFECTIVO : </b></td>
+                  {% set monto_entregado = facturaVenta.venta.ventaFormaPago[0].montoEntregado ? facturaVenta.venta.ventaFormaPago[0].montoEntregado : 0 %}
+                  {% set monto_a_pagar = total %}
+                  {% set vuelto = monto_entregado - monto_a_pagar  %}  
+                  <td style="text-align:right;font-size: 9pt;">{{ monto_entregado | number_format(2, '.', ',') }}</td>
+                </tr>  
+
+                <tr class="total">
+                  <td colspan="3" style="text-align:left;font-size: 9pt;"><b>VUELTO : </b></td>
+                  <td style="text-align:right;font-size: 9pt;">{{ vuelto | number_format(2, '.', ',') }}</td>
+                </tr>  
+
+            {% endif %}
+
+
+
+        </table>
+    </div>
+    <br>
+
+        {% set totalEntero = total|parteEntera  %}
+        {% set totalDecimal = total|parteDecimal %}
+
+
+    <div class="pie">
+      <strong>IMPORTE EN LETRAS:</strong><br>{{ numeroALetras(totalEntero) ~ ' con ' ~ totalDecimal ~ '/100 ' }} {{ facturaVenta.venta.ventaFormaPago[0].moneda ? facturaVenta.venta.ventaFormaPago[0].moneda.nombre | upper : 'SOLES' }}
+    </div>
+
+    <hr style="border:1px dotted #b8b3b3; width:220px" />
+
+    <div class="cabecera" style="text-align: center;">          
+        GRACIAS POR SU PREFERENCIA<br>
+    </div>
+
+
+</section>

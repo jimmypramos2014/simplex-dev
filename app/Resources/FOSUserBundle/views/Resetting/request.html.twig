@@ -1,0 +1,24 @@
+{% extends "@FOSUser/layout.html.twig" %}
+
+{% block fos_user_content %}
+
+<div class="container">
+	
+	<div class="card">
+	  <div class="card-header">
+	    Restablecer contraseña
+	  </div>
+	  <div class="card-body">
+	    {#<h5 class="card-title">Solo los usuarios pueden recuperar su contraseña, los vendedores y almaceneros deben solicitar al usuario Administrador de su empresa el cambio de su contraseña.</h5>#}
+	    <p class="card-text">Solo los usuarios administradores pueden recuperar su contraseña, los vendedores y almaceneros deben solicitar al usuario Administrador de su empresa el cambio de su contraseña.</p>
+	    
+	    {% include "@FOSUser/Resetting/request_content.html.twig" %}
+
+	  </div>
+	</div>
+
+</div>
+
+     
+
+{% endblock fos_user_content %}

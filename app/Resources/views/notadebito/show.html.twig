@@ -1,0 +1,132 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Notadebito</h1>
+
+    <table>
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ notaDebito.id }}</td>
+            </tr>
+            <tr>
+                <th>Numero</th>
+                <td>{{ notaDebito.numero }}</td>
+            </tr>
+            <tr>
+                <th>Serie</th>
+                <td>{{ notaDebito.serie }}</td>
+            </tr>
+            <tr>
+                <th>Fecha</th>
+                <td>{% if notaDebito.fecha %}{{ notaDebito.fecha|date('Y-m-d H:i:s') }}{% endif %}</td>
+            </tr>
+            <tr>
+                <th>Fechavencimiento</th>
+                <td>{% if notaDebito.fechaVencimiento %}{{ notaDebito.fechaVencimiento|date('Y-m-d H:i:s') }}{% endif %}</td>
+            </tr>
+            <tr>
+                <th>Estado</th>
+                <td>{% if notaDebito.estado %}Yes{% else %}No{% endif %}</td>
+            </tr>
+            <tr>
+                <th>Tipoventa</th>
+                <td>{{ notaDebito.tipoVenta }}</td>
+            </tr>
+            <tr>
+                <th>Documentomodifica</th>
+                <td>{{ notaDebito.documentoModifica }}</td>
+            </tr>
+            <tr>
+                <th>Valortipocambio</th>
+                <td>{{ notaDebito.valorTipoCambio }}</td>
+            </tr>
+            <tr>
+                <th>Numeroguiaremision</th>
+                <td>{{ notaDebito.numeroGuiaRemision }}</td>
+            </tr>
+            <tr>
+                <th>Ordencompra</th>
+                <td>{{ notaDebito.ordenCompra }}</td>
+            </tr>
+            <tr>
+                <th>Placavehiculo</th>
+                <td>{{ notaDebito.placaVehiculo }}</td>
+            </tr>
+            <tr>
+                <th>Condicionpago</th>
+                <td>{{ notaDebito.condicionPago }}</td>
+            </tr>
+            <tr>
+                <th>Observacion</th>
+                <td>{{ notaDebito.observacion }}</td>
+            </tr>
+            <tr>
+                <th>Total</th>
+                <td>{{ notaDebito.total }}</td>
+            </tr>
+            <tr>
+                <th>Totalgravada</th>
+                <td>{{ notaDebito.totalGravada }}</td>
+            </tr>
+            <tr>
+                <th>Totalexonerada</th>
+                <td>{{ notaDebito.totalExonerada }}</td>
+            </tr>
+            <tr>
+                <th>Totalgratuita</th>
+                <td>{{ notaDebito.totalGratuita }}</td>
+            </tr>
+            <tr>
+                <th>Descuentoglobal</th>
+                <td>{{ notaDebito.descuentoGlobal }}</td>
+            </tr>
+            <tr>
+                <th>Descuentoxitem</th>
+                <td>{{ notaDebito.descuentoXItem }}</td>
+            </tr>
+            <tr>
+                <th>Enlacexml</th>
+                <td>{{ notaDebito.enlaceXml }}</td>
+            </tr>
+            <tr>
+                <th>Enlacecdr</th>
+                <td>{{ notaDebito.enlaceCdr }}</td>
+            </tr>
+            <tr>
+                <th>Enlacepdf</th>
+                <td>{{ notaDebito.enlacePdf }}</td>
+            </tr>
+            <tr>
+                <th>Enlacepdfferretero</th>
+                <td>{{ notaDebito.enlacePdfFerretero }}</td>
+            </tr>
+            <tr>
+                <th>Motivoanulacion</th>
+                <td>{{ notaDebito.motivoAnulacion }}</td>
+            </tr>
+            <tr>
+                <th>Fechacreacion</th>
+                <td>{% if notaDebito.fechaCreacion %}{{ notaDebito.fechaCreacion|date('Y-m-d H:i:s') }}{% endif %}</td>
+            </tr>
+            <tr>
+                <th>Fechamodificacion</th>
+                <td>{% if notaDebito.fechaModificacion %}{{ notaDebito.fechaModificacion|date('Y-m-d H:i:s') }}{% endif %}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <ul>
+        <li>
+            <a href="{{ path('notadebito_index') }}">Back to the list</a>
+        </li>
+        <li>
+            <a href="{{ path('notadebito_edit', { 'id': notaDebito.id }) }}">Edit</a>
+        </li>
+        <li>
+            {{ form_start(delete_form) }}
+                <input type="submit" value="Delete">
+            {{ form_end(delete_form) }}
+        </li>
+    </ul>
+{% endblock %}

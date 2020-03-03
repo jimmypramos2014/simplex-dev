@@ -1,0 +1,449 @@
+{% extends 'base.html.twig' %}
+{% block stylesheets %}
+    {{ parent() }} 
+
+    <link href="https://cdn.datatables.net/buttons/1.5.2/css/buttons.dataTables.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.2.2/css/responsive.bootstrap4.css"/>
+
+{% endblock %}
+{% block body %}
+
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="alert alert-{{ label }}" role="alert">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endfor %}
+
+    <div class="container">
+
+        <div class="card mx-auto mt-5">
+            <div class="card-body">
+
+
+                <div class="row mt-2 ">
+                    <div class="col-lg-12">
+                        <table id="dtTable" class="table table-striped table-bordered "  style="width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th>Nro.Doc.</th>
+                                    <th>Tipo Doc.</th>
+                                    <th>Fecha</th>
+                                    <th>Producto</th>
+                                    <th>Cantidad comprada</th>
+                                    <th class="text-center">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {% set item = 1 %}
+                            {% for facturaCompra in facturaCompras %}
+
+                                {% for detalleCompra in facturaCompra.compra.detalleCompra %}
+                                    
+                                    <tr>
+                                        <td>{{ facturaCompra.numeroDocumento }}</td>
+                                        <td>{{ facturaCompra.documento | upper }}</td>
+                                        <td><span class="d-none">{{ facturaCompra.fecha | date('YmdHi') }}</span>{{ facturaCompra.fecha | date('d/m/Y') }}</td>
+                                        <td>{{ detalleCompra.productoXLocal.producto.nombre | upper }}</td>
+                                        <td>{{ detalleCompra.cantidad | number_format(2,'.',',') }}</td>
+
+                                        <td class="text-center">                                        
+
+
+                                            {% if detalleCompra.estado %}
+
+                                                <a href="javascript:eliminar({{detalleCompra.id}},{{ detalleCompra.subtotal}})" class="mr-2" data-toggle="tooltip" data-target="" title="Anular">
+                                                    <i class="fa fa-remove fa-lg"></i>
+                                                </a>
+
+                                            {% else %}
+
+                                                {% if detalleCompra.tipoAnulacion == 'anulacion_notacredito' %}
+
+                                                    <a href="javascript:verInfoAnulacionNotaCredito({{detalleCompra.id}})" class="mr-2" data-toggle="tooltip" data-target="" title="Ver información de anulación">
+                                                        <i class="fa fa-file fa-lg"></i>
+                                                    </a>
+
+                                                {% else %}
+
+                                                    <a href="javascript:verInfoAnulacionDevolucion({{detalleCompra.id}})" class="mr-2" data-toggle="tooltip" data-target="" title="Ver información de anulación">
+                                                        <i class="fa fa-file fa-lg"></i>
+                                                    </a>
+
+                                                    {% if facturaCompra.local.cajaybanco %}
+                                                        <a href="#" class="mr-2" data-toggle="modal" data-target="#cobrarTransaccion" data-factura="{{ detalleCompra.id }}"><i class="fa fa-money fa-lg" data-toggle="tooltip" title="Cobrar Transaccion"></i></a>
+                                                    {% endif %}                                                    
+
+                                                {% endif %}
+
+
+                                            {% endif %}
+
+
+                                        
+                                        </td>
+
+                                    </tr>
+
+                                {% endfor %}
+
+                                {% set item = item + 1 %}
+
+                            {% endfor %}
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade " id="anularCompra" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Nota de crédito</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form id="form" action="{{ path('facturacompra_guardar_detallecompra_notacredito') }}" class="form-horizontal " role="form" method="post"  enctype="multipart/form-data" novalidate>
+                    <div class="modal-body">
+
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                        <button type="submit" class="btn btn-success" id="btn_guardar">Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal fade " id="anularCompraDevolucion" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Devolución</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form id="form" action="{{ path('facturacompra_guardar_detallecompra_devolucion') }}" class="form-horizontal " role="form" method="post"  enctype="multipart/form-data" novalidate>
+                    <div class="modal-body">
+
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                        <button type="submit" class="btn btn-success" id="btn_guardar">Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade cobrarTransaccion" id="cobrarTransaccion" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Cobrar transacción</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form id="form" action="{{ path('cajaybanco_procesarpagotransaccion') }}" class="form-horizontal " role="form" method="post"  enctype="multipart/form-data" novalidate>
+                    <div class="modal-body">
+
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                        <button type="submit" class="btn btn-success" id="btn_pagar">Pagar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal fade " tabindex="-1" role="dialog" aria-labelledby="entregaModalLabel" id="modalEntrega" aria-hidden="true">
+        <div class="modal-dialog ">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Datos de entrega</h5>
+                    <button type="button" class="close" onclick="$('#modalEntrega').modal('hide');" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>                    
+                </div>
+
+                    <div class="modal-body">
+
+                        <div class="form-row">
+                           
+                            <div class="form-group col-md-8">
+                                <label for="cliente">Nombre del Cliente</label>           
+                                <input type="text" class="form-control" name="cliente" id="cliente"  />
+                            </div>
+
+
+                        </div>
+
+                        <div class="form-row">
+
+                            <div class="form-group col-md-12">
+                                <label for="direccion">Dirección</label>                  
+                                <input type="text" class="form-control" name="direccion" id="direccion" />
+                            </div>
+
+                        </div>
+
+                        <input type="hidden" class="form-control" name="identificador" id="identificador" />
+
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" id="btn_guardar">Guardar</button>
+                        <button type="button" class="btn btn-secondary" onclick="$('#modalEntrega').modal('hide');">Cerrar</button>
+                    </div>
+
+            </div>
+        </div>
+    </div>
+
+
+{% endblock %}
+
+{% block javascripts %}
+
+    {{ parent() }} 
+    <script src="https://cdn.datatables.net/buttons/1.5.2/js/dataTables.buttons.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/responsive/2.2.2/js/dataTables.responsive.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.print.min.js"></script>
+
+    <script type="text/javascript">
+
+
+        function eliminar(id,subtotal) {
+
+            bootbox.prompt({
+                title: "<p>Seleccione una opción.</p>",
+                inputType: 'checkbox',
+                closeButton: false,
+                inputOptions: [
+                    {
+                        text: 'Anular y devolver dinero',
+                        value: 'anular_devolucion',
+                    },
+                    {
+                        text: 'Anular y generar nota de crédito',
+                        value: 'anular_notacredito',
+                    },
+
+                ],
+                callback: function (result) {
+
+
+                    if (result != null) {
+
+                        if (result.length > 1) {
+
+                            bootbox.alert("Debe seleccionar solo una opción");
+                            return false;
+
+                        } else {
+
+                            if(result[0] == 'anular_notacredito'){
+
+                                var data = {
+                                    factura : id,
+                                    tipo  : result[0],
+                                }
+
+
+                                $.ajax({
+                                    method: "POST",
+                                    url: "{{ path('registrar_anulacion_detallecompra_nota_credito')}}",
+                                    data: data,
+                                    success: function(data){
+
+                                        $('#anularCompra').find('.modal-body').html(data);
+                                        $('#anularCompra').modal('show');
+
+                                        var monto_a_ingresar = $('#appbundle_detallecompraanulada_monto').val();
+
+                                        if(monto_a_ingresar == ''){
+                                            $('#appbundle_detallecompraanulada_monto').val(subtotal);
+                                        }
+                                    }
+
+                                });
+
+                            }else if(result[0] == 'anular_devolucion'){
+
+                                var data = {
+                                  factura : id,
+                                  tipo  : result[0],
+                                }
+
+                                $.ajax({
+                                  method: "POST",
+                                  url: "{{ path('registrar_anulacion_detallecompra_devolucion')}}",
+                                  data: data,
+                                  success: function(data){
+
+                                    $('#anularCompraDevolucion').find('.modal-body').html(data);
+                                    $('#anularCompraDevolucion').modal('show');
+
+                                    var monto_a_ingresar = $('#appbundle_detallecompraanulada_monto').val();
+
+                                    if(monto_a_ingresar == ''){
+                                        $('#appbundle_detallecompraanulada_monto').val(subtotal);
+                                    }
+
+                                  }
+
+                                });
+
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            });
+
+
+        }
+       
+        function verInfoAnulacionNotaCredito(id) {
+
+            var data = {
+                factura : id,
+            }
+
+
+            $.ajax({
+                method: "POST",
+                url: "{{ path('registrar_anulacion_detallecompra_nota_credito')}}",
+                data: data,
+                success: function(data){
+
+                    $('#anularCompra').find('.modal-body').html(data);
+                    $('#anularCompra').modal('show');
+
+                }
+
+            });
+
+
+        }
+
+        function verInfoAnulacionDevolucion(id) {
+
+            var data = {
+                factura : id,
+            }
+
+
+            $.ajax({
+                method: "POST",
+                url: "{{ path('registrar_anulacion_detallecompra_devolucion')}}",
+                data: data,
+                success: function(data){
+
+                    $('#anularCompraDevolucion').find('.modal-body').html(data);
+                    $('#anularCompraDevolucion').modal('show');
+
+                }
+
+            });
+
+
+        }
+
+
+        $(document).ready(function() {
+            $('#dtTable').DataTable( {
+                "language": {
+                    "lengthMenu": "Mostrar _MENU_ registros por página",
+                    "zeroRecords": "No se encontraron registros",
+                    "info": "Mostrando página _PAGE_ de _PAGES_",
+                    "infoEmpty": "No existen registros",
+                    "infoFiltered": "(filtrado de _MAX_ total registros)",
+                    "search": "Buscar:",
+                    "paginate": {
+                        "first":      "Primero",
+                        "last":       "Último",
+                        "next":       "Siguiente",
+                        "previous":   "Anterior"
+                    },
+                },                
+                dom: 'Bfrtip',
+                order: [[ 2, "desc" ]],
+                responsive: true,
+                buttons: [
+                    {
+                        extend: 'excelHtml5',
+                        messageTop: 'Generado por : {{ app.user.username }} . Fecha de generación :  {{ "now" | date("d/m/Y H:i") }}'
+                    },
+                    {
+                        extend: 'pdfHtml5',
+                        messageTop: 'Generado por : {{ app.user.username }} . Fecha de generación :  {{ "now" | date("d/m/Y H:i") }}'
+                    },
+                    {
+                        extend: 'print',
+                        messageTop: 'Generado por : {{ app.user.username }} . Fecha de generación :  {{ "now" | date("d/m/Y H:i") }}'
+                    }
+                ]  
+            });
+
+
+            $('#cobrarTransaccion').on('show.bs.modal', function (event) {
+                var button    = $(event.relatedTarget);
+                var recipient = button.data('factura');
+
+                var modal = $(this);
+
+                var cargandoTexto = '<div class="text-center"><i class="fa fa-circle-o-notch fa-spin"></i>Cargando.....</div>';
+            
+                modal.find('.modal-body').html(cargandoTexto);
+
+                var data = {
+                    factura     : recipient,
+                    tipo  : 'detallecompra_anulada',
+                }
+
+
+                $.ajax({
+                    method: "POST",
+                    url: "{{ path('procesar_pago_transaccion')}}",
+                    data: data,
+                    success: function(data){
+                        modal.find('.modal-body').html(data);
+                        //location.reload();
+
+                    }
+
+                });
+
+            });
+
+        });
+
+    </script>
+          
+{% endblock %}

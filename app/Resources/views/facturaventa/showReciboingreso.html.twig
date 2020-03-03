@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="es">
+
+    <meta charset="utf-8">
+    <head>
+        <title>Recibo de ingreso</title>
+        <style type="text/css">
+
+            body { 
+                font-family:Arial;
+                font-size:14pt;
+            }
+
+        </style>
+    </head>
+
+    <body>
+
+        {% set numRecibo_X = 0 %}
+        {% set numRecibo_Y = 0 %}
+        {% set cliente_X = 0 %}
+        {% set cliente_Y = 0 %}
+        {% set montoAcuenta_X = 0 %}
+        {% set montoAcuenta_Y = 0 %}            
+        {% set concepto_X = 0 %}
+        {% set concepto_Y = 0 %}
+        {% set fechaIngreso_X = 0 %}
+        {% set fechaIngreso_Y = 0 %}            
+        {% set total_X = 0 %}
+        {% set total_Y = 0 %}
+        {% set aCuenta_X = 0 %}
+        {% set aCuenta_Y = 0 %}
+        {% set saldo_X = 0 %}
+        {% set saldo_Y = 0 %}
+        {% set direccionEmpresa_X = 0 %}
+        {% set direccionEmpresa_Y = 0 %}
+        {% set contactoEmpresa_X = 0 %}
+        {% set contactoEmpresa_Y = 0 %}
+
+        {% for componenteXDocumento in componentesXDocumento %}
+            
+            {% if componenteXDocumento.componente.nombre == 'numRecibo' %}
+                {% set numRecibo_X = componenteXDocumento.posicionX %}
+                {% set numRecibo_Y = componenteXDocumento.posicionY %}
+            {% endif %}
+
+
+            {% if componenteXDocumento.componente.nombre == 'cliente' %}
+                {% set cliente_X = componenteXDocumento.posicionX %}
+                {% set cliente_Y = componenteXDocumento.posicionY %}
+            {% endif %}
+
+
+            {% if componenteXDocumento.componente.nombre == 'montoAcuenta' %}
+                {% set montoAcuenta_X = componenteXDocumento.posicionX %}
+                {% set montoAcuenta_Y = componenteXDocumento.posicionY %}
+            {% endif %}
+
+            
+            {% if componenteXDocumento.componente.nombre == 'concepto' %}
+                {% set concepto_X = componenteXDocumento.posicionX %}
+                {% set concepto_Y = componenteXDocumento.posicionY %}
+            {% endif %}
+
+
+            {% if componenteXDocumento.componente.nombre == 'total' %}
+                {% set total_X = componenteXDocumento.posicionX %}
+                {% set total_Y = componenteXDocumento.posicionY %}
+            {% endif %}
+
+            {% if componenteXDocumento.componente.nombre == 'aCuenta' %}
+                {% set aCuenta_X = componenteXDocumento.posicionX %}
+                {% set aCuenta_Y = componenteXDocumento.posicionY %}
+            {% endif %}
+
+            {% if componenteXDocumento.componente.nombre == 'saldo' %}
+                {% set saldo_X = componenteXDocumento.posicionX %}
+                {% set saldo_Y = componenteXDocumento.posicionY %}
+            {% endif %}
+             
+            {% if componenteXDocumento.componente.nombre == 'fechaIngreso' %}
+                {% set fechaIngreso_X = componenteXDocumento.posicionX %}
+                {% set fechaIngreso_Y = componenteXDocumento.posicionY %}
+            {% endif %}
+
+            {% if componenteXDocumento.componente.nombre == 'direccionEmpresa' %}
+                {% set direccionEmpresa_X = componenteXDocumento.posicionX %}
+                {% set direccionEmpresa_Y = componenteXDocumento.posicionY %}
+            {% endif %}
+
+            {% if componenteXDocumento.componente.nombre == 'contactoEmpresa' %}
+                {% set contactoEmpresa_X = componenteXDocumento.posicionX %}
+                {% set contactoEmpresa_Y = componenteXDocumento.posicionY %}
+            {% endif %}
+
+        {% endfor %}
+
+        <div style="background-image: url({{ 'http://' ~ host ~ '/formatos/' ~ app.session.get('empresa') ~ '/recibo_ingreso.jpg' }});background-size: 100%;background-repeat: no-repeat;position:relative;top:0px;left:0px;width: 990px;height: 691px; color: black;">
+
+            <div style="position:absolute; top: {{direccionEmpresa_X - 100 }}px; left:{{direccionEmpresa_Y }}px;">
+                <img src="{{ 'http://' ~ host ~ '/uploads/imagenes/' ~ localObj.empresa.logo }}" alt="" width="320px" height="80px">
+            </div>
+
+            {% if localObj.empresa.direccion %}
+
+            <span id="direccionEmpresa" style="position:absolute; top: {{direccionEmpresa_X}}px; left:{{direccionEmpresa_Y}}px; width: 500px; color: #253F8A;font-size:15pt;font-weight:bold;">{{ localObj.empresa.direccion }}</span>
+            {% endif %}
+
+            {% if localObj.telefono %}
+
+                <span id="contactoEmpresa" style="position:absolute; top: {{contactoEmpresa_X}}px; left:{{contactoEmpresa_Y}}px; width: 500px; color: #253F8A;font-size:12pt;font-weight:bold;">{{ 'Tel.:' ~ localObj.telefono ~ ' ' }} {{ localObj.email ? ' Email: ' ~ localObj.email:'' }}</span>
+
+            {% endif %}
+
+            <span id="numRecibo" style="position:absolute; top: {{ numRecibo_X ~ 'px' }}; left: {{ numRecibo_Y }}px; width: 200px;color: #253F8A;font-size:20pt;">{{ facturaVenta.ticket ? facturaVenta.ticket | upper : ''  }}</span>
+            <span id="cliente" style="position:absolute; top: {{ cliente_X }}px; left: {{ cliente_Y }}px; width: 700px; color: black;">{{ facturaVenta.cliente ? facturaVenta.cliente | upper : facturaVenta.clienteNombre | upper  }}</span>
+
+            <span id="montoAcuenta" style="position:absolute; top: {{ montoAcuenta_X }}px; left: {{ montoAcuenta_Y }}px; width: 400px; color: black;">{{ facturaVenta.venta.ventaFormaPago ? facturaVenta.venta.ventaFormaPago[0].montoACuenta ~ ' soles' : 0}} </span>
+
+            <span id="concepto" style="position:absolute; top: {{ concepto_X }}px; left: {{ concepto_Y }}px; width: 400px; color: black;">VENTA</span>
+            <span id="fechaEgreso" style="position:absolute; top: {{ fechaIngreso_X }}px; left: {{ fechaIngreso_Y }}px; width: 400px; color: black;">{{ "now" | date('d/m/Y') }}</span>
+            
+            {% set saldo = facturaVenta.venta.ventaFormaPago[0].cantidad - facturaVenta.venta.ventaFormaPago[0].montoACuenta %}
+            <span id="total" style="position:absolute; top: {{ total_X }}px; left: {{ total_Y }}px; width: 40px; color: black;">
+                {{ facturaVenta.venta.ventaFormaPago ? facturaVenta.venta.ventaFormaPago[0].cantidad | number_format(2,'.',',') : 0 }}</span>
+            <span id="aCuenta" style="position:absolute; top: {{ aCuenta_X }}px; left: {{ aCuenta_Y }}px; width: 40px; color: black;">{{ facturaVenta.venta.ventaFormaPago ? facturaVenta.venta.ventaFormaPago[0].montoACuenta | number_format(2,'.',',') : 0 }}</span>
+            <span id="saldo" style="position:absolute; top: {{ saldo_X }}px; left: {{ saldo_Y }}px; width: 40px; color: black;">
+             {{ saldo | number_format(2,'.',',') }}
+            </span>
+
+        <div>
+
+
+        
+        <span id="foot" style="position:absolute; top: 691px; left: 990px;color: black;"></span>
+
+
+
+        <div style="background-image: url({{ 'http://' ~ host ~ '/formatos/' ~ app.session.get('empresa') ~ '/recibo_ingreso.jpg' }});background-size: 100%;background-repeat: no-repeat;position:relative;top:850px;left:0px;width: 990px;height: 691px;color: black;">
+
+            <div style="position:absolute; top: {{direccionEmpresa_X  - 100  }}px; left:{{direccionEmpresa_Y }}px;">
+                <img src="{{ 'http://' ~ host ~ '/uploads/imagenes/' ~ localObj.empresa.logo }}" alt="" width="320px" height="80px">
+            </div>
+
+            {% if localObj.empresa.direccion %}
+
+            <span id="direccionEmpresa" style="position:absolute; top: {{direccionEmpresa_X}}px; left:{{direccionEmpresa_Y}}px; width: 500px; color: #253F8A;font-size:15pt;font-weight:bold;">{{ localObj.empresa.direccion }}</span>
+            {% endif %}
+
+            {% if localObj.telefono %}
+
+                <span id="contactoEmpresa" style="position:absolute; top: {{contactoEmpresa_X}}px; left:{{contactoEmpresa_Y}}px; width: 500px; color: #253F8A;font-size:12pt;font-weight:bold;">{{ 'Tel.:' ~ localObj.telefono ~ ' ' }} {{ localObj.email ? ' Email: ' ~ localObj.email:'' }}</span>
+
+            {% endif %}
+
+            <span id="numRecibo" style="position:absolute; top: {{ numRecibo_X ~ 'px' }}; left: {{ numRecibo_Y }}px; width: 200px;color: #253F8A;font-size:20pt;">{{ facturaVenta.ticket ? facturaVenta.ticket | upper : ''  }}</span>
+            <span id="cliente" style="position:absolute; top: {{ cliente_X }}px; left: {{ cliente_Y }}px; width: 700px; color: black;">{{ facturaVenta.cliente ? facturaVenta.cliente | upper : facturaVenta.clienteNombre | upper  }}</span>
+
+            <span id="montoAcuenta" style="position:absolute; top: {{ montoAcuenta_X }}px; left: {{ montoAcuenta_Y }}px; width: 400px; color: black;">{{ facturaVenta.venta.ventaFormaPago ? facturaVenta.venta.ventaFormaPago[0].montoACuenta ~ ' soles': 0}} </span>
+
+            <span id="concepto" style="position:absolute; top: {{ concepto_X }}px; left: {{ concepto_Y }}px; width: 400px; color: black;">VENTA</span>
+            <span id="fechaEgreso" style="position:absolute; top: {{ fechaIngreso_X }}px; left: {{ fechaIngreso_Y }}px; width: 400px; color: black;">{{ "now" | date('d/m/Y') }}</span>
+            
+            {% set saldo = facturaVenta.venta.ventaFormaPago[0].cantidad - facturaVenta.venta.ventaFormaPago[0].montoACuenta %}
+
+            <span id="total" style="position:absolute; top: {{ total_X }}px; left: {{ total_Y }}px; width: 40px; color: black;">{{ facturaVenta.venta.ventaFormaPago ? facturaVenta.venta.ventaFormaPago[0].cantidad | number_format(2,'.',',') : 0 }}</span>
+            <span id="aCuenta" style="position:absolute; top: {{ aCuenta_X }}px; left: {{ aCuenta_Y }}px; width: 40px; color: black;">{{ facturaVenta.venta.ventaFormaPago ? facturaVenta.venta.ventaFormaPago[0].montoACuenta : 0 }}</span>
+            <span id="saldo" style="position:absolute; top: {{ saldo_X }}px; left: {{ saldo_Y }}px; width: 40px; color: black;">{{ saldo | number_format(2,'.',',') }}</span>
+
+       <div>
+
+
+
+    </body>
+
+</html>

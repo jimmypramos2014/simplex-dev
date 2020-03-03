@@ -1,0 +1,71 @@
+<div class="form-row">
+
+
+    <div class="form-group col-md-4">
+        {{ form_row(form.numero) }}              
+     
+    </div>
+   
+    <div class="form-group col-md-4">
+        {{ form_row(form.fechaEmision) }}              
+     
+    </div>
+
+    <div class="form-group col-md-4">
+        {{ form_row(form.fechaVencimiento) }}                                       
+    </div>
+
+</div>
+
+<div class="form-row">
+
+   
+    <div class="form-group col-md-2">
+        {{ form_row(form.ruc) }}                                       
+    </div>
+
+    <div class="form-group col-md-5">
+        {{ form_row(form.denominacion) }}                                       
+    </div>
+   
+    <div class="form-group col-md-5">
+        {{ form_row(form.direccion) }}                                       
+    </div>
+
+</div>
+
+<div class="form-row">
+
+    <div class="form-group col-md-4">
+        {{ form_row(form.observacion) }}
+    </div>
+   
+    <div class="form-group col-md-3">
+        {{ form_row(form.motivoEmision) }}                                       
+    </div>
+
+    <div class="form-group col-md-3">
+        {{ form_row(form.numeroDocumentoRelacionado) }}
+    </div>
+
+    <div class="form-group col-md-2">
+        {{ form_row(form.monto) }}
+    </div>
+
+</div>
+{{ form_widget(form._token) }}
+{{ form_widget(form.facturaCompra) }}
+
+<script type="text/javascript">
+    $(document).ready(function() {
+
+        $(".fecha").datepicker({
+            format: 'dd/mm/yyyy',
+            language: 'es',
+            autoclose: true,
+              
+        });
+
+    });
+
+</script>

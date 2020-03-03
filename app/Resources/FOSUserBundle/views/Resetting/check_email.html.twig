@@ -1,0 +1,25 @@
+{% extends "@FOSUser/layout.html.twig" %}
+
+{% trans_default_domain 'FOSUserBundle' %}
+
+{% block fos_user_content %}
+
+<div class="container">
+	
+	<div class="card">
+		  <div class="card-header">
+		    Restablecer contraseña
+		  </div>
+		  <div class="card-body">
+		    {#{{ 'registration.check_email'|trans({'%email%': user.email}) }}#}
+		    <p class="card-text">Se ha enviado un mensaje a su correo electrónico. Contiene un enlace de activación al que debes acceder para activar tu cuenta. </p> 
+		    
+		  </div>
+	</div>
+
+</div>
+
+
+{#     <p>{{ 'registration.check_email'|trans({'%email%': user.email}) }}</p>
+ #}
+{% endblock fos_user_content %}

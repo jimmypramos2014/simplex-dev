@@ -1,0 +1,73 @@
+{% extends '@FOSUser/layout.html.twig' %}
+
+{% block fos_user_content %}
+
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="alert alert-{{ label }}" role="alert">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endfor %}
+
+    <div class="container">
+        <form id="form" action="{{ path('usuario_registro') }}" class="form-horizontal " role="form" method="post"  >
+            <div class="py-5 text-center">
+                <img class="logo d-block mx-auto mb-4" src="{{asset('template/img/logo.png')}}" alt="" >
+            </div>
+            <div class="card card-login mx-auto mt-5">
+
+                <div class="card-body">
+
+                    <div class="form-row">
+                        <div class="form-group col-md-12">
+                            {{ form_row(form.razon_social) }}
+                        </div>                    
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group col-md-12">
+                            {{ form_label(form.subdominio) }}
+                            <div class="input-group">
+                              {{ form_widget(form.subdominio) }}
+                              <div class="input-group-append">
+                                <span class="input-group-text" id="">.simplex.pe</span>
+                              </div>
+                            </div>
+                            {{ form_errors(form.subdominio) }}
+                        </div>                    
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            {{ form_row(form.dni) }}
+                        </div>
+                        <div class="form-group col-md-6">
+                            {{ form_row(form.email) }}
+                        </div>                                             
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group col-md-12">
+                            {{ form_row(form.password) }}
+                        </div>                    
+                    </div>
+
+                    {{ form_widget(form._token) }}
+
+                    <div class="form-row">
+                        <div class="form-group col-md-12">
+                            <input type="submit" class="btn btn-small btn-primary" value="Registrar" />
+                        </div>                    
+                    </div>
+
+                </div>
+
+            </div>
+
+        </form>
+
+    </div>
+
+
+{% endblock fos_user_content %}
